@@ -45,7 +45,7 @@
         window.switchLang = function(lang) {
             if (lang === 'en') {
                 document.getElementById('site-name').textContent = 'Julas Camp';
-                document.getElementById('form-title').textContent = 'Choose the perfect time and enjoy an unforgettable camping experience ';
+               // document.getElementById('form-title').textContent = ' Enjoy an unforgettable camping experience ';
                 document.getElementById('name-label').textContent = 'Full Name';
                 document.getElementById('email-label').textContent = 'Email Address';
                 document.getElementById('date-label').textContent = 'Booking Date';
@@ -55,7 +55,7 @@
 
             } else if (lang === 'ar') {
                 document.getElementById('site-name').textContent = 'Julas Camp';
-                document.getElementById('form-title').textContent = 'اختَر الوقت المثالي، واستمتع بتجربة مخيم لا تُنسى';
+               // document.getElementById('form-title').textContent = ' استمتع بتجربة مخيم لا تُنسى';
                 document.getElementById('name-label').textContent = 'الاسم الكامل';
                 document.getElementById('email-label').textContent = 'البريد الإلكتروني';
                 document.getElementById('date-label').textContent = 'تاريخ الحجز';
@@ -132,7 +132,7 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #1c1c1c;
+    background-color: #000000;
     color: #e3e3e3;
     margin: 0;
     padding: 0;
@@ -143,8 +143,12 @@ body {
     margin: 50px auto;
     background: #000;
     padding: 20px;
-    box-shadow: 0 0 15px rgba(208, 183, 183, 0.6);
+    /*box-shadow: 0 0 15px rgba(208, 183, 183, 0.6);
+    */
     border-radius: 12px;
+}
+.periods-title{
+    font-size: 1px;
 }
 
 .logo {
@@ -162,7 +166,7 @@ body {
 .title {
     text-align: center;
     margin-bottom: 15px;
-    font-size: 12px; /* تصغير حجم الخط */
+    font-size: 9px; /* تصغير حجم الخط */
     font-weight: 300; /* استخدام وزن خط أخف */
     color: #eee; /* تغيير اللون لتكون أكثر جاذبية */
 }
@@ -180,7 +184,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 16px;
+    font-size: 13px;
     text-align: left;
     border: 1px solid #444;
     
@@ -192,13 +196,7 @@ body {
 
 }
 
-.period .title {
-    font-size: 18px;
-    font-weight: 500;
-    color: #fff;
-    text-decoration: underline; /* وضع خط تحت العنوان */
-    text-underline-offset: 4px; /* تعيين المسافة بين النص والخط تحت */
-}
+
 
 .period .details {
     display: flex;
@@ -206,13 +204,13 @@ body {
 }
 
 .period .time, .period .price {
-    font-size: 16px;
+    font-size: 13px;
     color: #ddd;
     margin-left: 20px;
 }
 
 .period .price {
-    color: #ff4a4aec;
+    color: #ffffffec;
     font-weight: 700;
 }
 
@@ -220,24 +218,11 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 11px;
     color: #fdfdfdf5; /* تغيير اللون إلى السكري */
 }
 
-input, select {
-    width: calc(100% - 22px); /* حساب المسافة حول الحقول */
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #555;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
-    color: #ffffff; /* تغيير اللون إلى السكري */
-    font-size: 16px;
-}
 
-input::placeholder {
-    color: #d62525; /* تغيير اللون إلى السكري */
-}
 
 
 input, select {
@@ -255,24 +240,34 @@ input::placeholder {
     color: #ddd;
 }
 
-/* زر Book */
-button {
+
+.titleSelectTime{
+    font-size: 14px;
+    text-align: center;
+    text-decoration: underline;
+
+}
+
+.Book button{
+
     padding: 12px;
     background: #ff6600;
     color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    width: 50%;
+    width: 100%;
     font-size: 20px;
     font-weight: 500;
     margin: 20px auto; /* توسيط الزر عمودياً وأفقياً */
     display: block; /* التأكد من أن الزر يعتبر عنصر بلوك */
     transition: background 0.3s ease;
-}
 
+    
+}
 button:hover {
     background: #e65c00;
+
 }
 
 .lang-switch {
@@ -283,6 +278,7 @@ button:hover {
 .lang-switch button {
     background: #555;
     border: none;
+    border-radius: 8px;
     padding: 10px 20px;
     color: #fff;
     cursor: pointer;
@@ -290,6 +286,7 @@ button:hover {
     font-size: 16px;
     margin-top: 10px;
     font-weight: 500;
+    width: 25%;
     transition: background 0.3s ease;
     display: inline-block; /* التأكد من أن الأزرار تكون بجانب بعضها */
 }
@@ -315,9 +312,7 @@ button:hover {
             <img src="logo2.jpg" alt="Logo">
             <h2 id="site-name">Julas Camp</h2>
         </div>
-        <div class="title">
-            <h2 id="form-title">Choose the perfect time and enjoy an unforgettable camping experience</h2>
-        </div>
+        
         <form id="bookingForm">
             <label for="name" id="name-label">Full Name</label>
             <input type="text" id="name" name="name" required>
@@ -327,8 +322,12 @@ button:hover {
             
             <label for="date" id="date-label">Booking Date</label>
             <input type="date" id="date" name="date" required>
+            
+            <div class="titleSelectTime">
+                <h3 id="periods-title">Choose the perfect time </h3>
 
-            <h3 id="periods-title">Choose the perfect time </h3>
+            </div>
+
             <div class="periods">
                 <div class="period" onclick="selectPeriod('09:00 AM - 04:00 PM | 25 OMR')">
                     Morning <br>
@@ -349,7 +348,9 @@ button:hover {
 
             <input type="hidden" id="time" name="time">
 
-            <button  type="submit">Book</button>
+            <div class="Book">
+                <button  type="submit">Book</button>
+            </div>
         </form>
         <div class="note" id="Note">Make your payment via phone, and easily confirm your booking by sending the receipt</div>
         <div class="lang-switch">

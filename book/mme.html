@@ -56,14 +56,12 @@
             } else if (lang === 'ar') {
                 document.getElementById('site-name').textContent = 'Julas Camp';
                // document.getElementById('form-title').textContent = ' استمتع بتجربة مخيم لا تُنسى';
-                document.getElementById('name-label').textContent = 'الاسم الكامل';
+                document.getElementById('name-label').textContent = 'الاسم ثلاثي';
                 document.getElementById('email-label').textContent = 'البريد الإلكتروني';
                 document.getElementById('date-label').textContent = 'تاريخ الحجز';
                 document.getElementById('periods-title').textContent = 'اختَر الوقت المناسب';
                 document.getElementById('Note').textContent = 'قم بالدفع عبر رقم الهاتف، وأرسل الإيصال لتأكيد حجزك بكل سهولة';
                 document.querySelector('button[type="submit"]').textContent = 'حجز';
-
-            
             }
         }
 
@@ -75,6 +73,23 @@
             } else {
                 switchLang('ar');
             }
+            function showModal(modalId, message) {
+                var modal = document.getElementById(modalId);
+                modal.querySelector('.modal-content p').textContent = message; // تحديث الرسالة في النافذة المنبثقة
+                modal.style.display = "block";
+
+                var span = modal.getElementsByClassName("close")[0];
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+            }
+            
 
             document.getElementById('bookingForm').addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -90,7 +105,7 @@
                 today.setHours(0, 0, 0, 0);
 
                 if (selectedDate < today) {
-                    alert('لا يمكنك الحجز في تاريخ فائت.');
+                    showModal('errorModal', 'لا يمكنك الحجز في تاريخ فائت.');
                     return;
                 }
 
@@ -99,7 +114,7 @@
                 const bookingRef = ref(database, 'bookings/' + bookingKey);
                 get(bookingRef).then((snapshot) => {
                     if (snapshot.exists()) {
-                        alert('التوقيت المحدد في هذا التاريخ محجوز بالفعل.');
+                        showModal('errorModal', 'التوقيت المحدد في هذا التاريخ محجوز بالفعل.');
                     } else {
                         set(bookingRef, {
                             name: name,
@@ -107,203 +122,278 @@
                             date: dateInput,
                             time: selectedPeriod
                         }).then(() => {
-                            alert('تم حجز المخيم بنجاح!');
+                            showModal('successModal', 'تم حجز المخيم بنجاح!');
                             form.reset();
                             var periods = document.getElementsByClassName('period');
                             for (var i = 0; i < periods.length; i++) {
                                 periods[i].style.backgroundColor = '#333';
                             }
-                            window.location.href = 'file:///C:/Users/ahood/Desktop/thank.html';
+                            setTimeout(function(){
+                                window.location.href = 'thank.html';
 
-
+                            }, 2000)
 
                         }).catch((error) => {
                             console.error('حدث خطأ أثناء الحجز:', error);
+                            showModal('errorModal', 'حدث خطأ أثناء الحجز، يرجى المحاولة مرة أخرى.');
+
                         });
                     }
                 });
             });
         }
     </script>
-
 <style>
-   /* استيراد الخط من Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #000000;
-    color: #e3e3e3;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    background: #000;
-    padding: 20px;
-    /*box-shadow: 0 0 15px rgba(208, 183, 183, 0.6);
-    */
-    border-radius: 12px;
-}
-.periods-title{
-    font-size: 1px;
-}
-
-.logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.logo img {
-    max-width: 100px;
-    margin-right: 10px;
-}
-
-.title {
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 9px; /* تصغير حجم الخط */
-    font-weight: 300; /* استخدام وزن خط أخف */
-    color: #eee; /* تغيير اللون لتكون أكثر جاذبية */
-}
-
-.periods {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.period {
-    padding: 15px;
-    background: #333;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    text-align: left;
-    border: 1px solid #444;
-    
-}
-
-.period:hover {
-    background: #444;
-    cursor: pointer;
-
-}
-
-
-
-.period .details {
-    display: flex;
-    align-items: center;
-}
-
-.period .time, .period .price {
-    font-size: 13px;
-    color: #ddd;
-    margin-left: 20px;
-}
-
-.period .price {
-    color: #ffffffec;
-    font-weight: 700;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    font-size: 11px;
-    color: #fdfdfdf5; /* تغيير اللون إلى السكري */
-}
-
-
-
-
-input, select {
-    width: calc(100% - 22px); /* حساب المسافة حول الحقول */
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #555;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
-    color: #fff;
-    font-size: 16px;
-}
-
-input::placeholder {
-    color: #ddd;
-}
-
-
-.titleSelectTime{
-    font-size: 14px;
-    text-align: center;
-    text-decoration: underline;
-
-}
-
-.Book button{
-
-    padding: 12px;
-    background: #ff6600;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 20px;
-    font-weight: 500;
-    margin: 20px auto; /* توسيط الزر عمودياً وأفقياً */
-    display: block; /* التأكد من أن الزر يعتبر عنصر بلوك */
-    transition: background 0.3s ease;
-
-    
-}
-button:hover {
-    background: #e65c00;
-
-}
-
-.lang-switch {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.lang-switch button {
-    background: #555;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    color: #fff;
-    cursor: pointer;
-    margin: 0 10px; /* تقليل المسافة بين الأزرار */
-    font-size: 16px;
-    margin-top: 10px;
-    font-weight: 500;
-    width: 25%;
-    transition: background 0.3s ease;
-    display: inline-block; /* التأكد من أن الأزرار تكون بجانب بعضها */
-}
-
-.lang-switch button:hover {
-    background: #666;
-}
-
-
-.note {
-    font-size: 14px;
-    color: #ddd;
-    margin-top: 20px;
-    text-align: center;
-}
-
-</style>
+    /* استيراد الخطوط من Google Fonts */
+ @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap');
+ 
+ body {
+     font-family: 'Roboto', 'Tajawal', sans-serif;
+     background-color: #000000;
+     color: #e3e3e3;
+     margin: 0;
+     padding: 0;
+ }
+ 
+ /* استخدام خط 'Tajawal' للنصوص العربية وخط 'Roboto' للنصوص الإنجليزية */
+ body[lang="ar"] {
+     font-family: 'Tajawal', sans-serif;
+ }
+ 
+ body[lang="en"] {
+     font-family: 'Roboto', sans-serif;
+ }
+ 
+ .container {
+     max-width: 600px;
+     margin: 50px auto;
+     background: #000;
+     padding: 20px;
+     border-radius: 12px;
+ }
+ 
+ .periods-title {
+     font-size: 1px;
+ }
+ 
+ .logo {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin-bottom: 20px;
+ }
+ 
+ .logo img {
+     max-width: 100px;
+     margin-right: 10px;
+ }
+ 
+ .title {
+     text-align: center;
+     margin-bottom: 15px;
+     font-size: 9px; /* تصغير حجم الخط */
+     font-weight: 300; /* استخدام وزن خط أخف */
+     color: #eee; /* تغيير اللون لتكون أكثر جاذبية */
+ }
+ 
+ .periods {
+     display: flex;
+     flex-direction: column;
+     gap: 15px;
+ }
+ 
+ .period {
+     padding: 9px;
+     background: #333;
+     border-radius: 8px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     font-size: 13px;
+     text-align: left;
+     border: 1px solid #555;
+     line-height: 1.5;
+ }
+ 
+ .period:hover {
+     background: #444;
+     cursor: pointer;
+ }
+ 
+ .period .details {
+     display: flex;
+     align-items: center;
+ }
+ 
+ .period .time, .period .price {
+     font-size: 13px;
+     color: #ddd;
+     margin-left: 20px;
+ }
+ 
+ .period .price {
+     color: #ffffffec;
+     font-weight: 700;
+ }
+ 
+ label {
+     display: block;
+     margin-bottom: 4px;
+     font-weight: 500;
+     font-size: 13px;
+     color: #fdfdfdf5; /* تغيير اللون إلى السكري */
+ }
+ 
+ input, select {
+     width: calc(100% - 22px); /* حساب المسافة حول الحقول */
+     padding: 16px;
+     margin-bottom: 9px;
+     border: 1px solid #555;
+     border-radius: 8px;
+     background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
+     color: #fff;
+     font-size: 12px;
+ }
+ 
+ input::placeholder {
+     color: #ddddddc3;
+ }
+ 
+ .titleSelectTime {
+     font-size: 16px;
+     text-align: center;
+ }
+ 
+ .Book button {
+     padding: 12px;
+     background: #ff6600;
+     color: #fff;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     width: 100%;
+     font-size: 20px;
+     border: 1px solid #fca063;
+     font-weight: 500;
+     margin: 20px auto; /* توسيط الزر عمودياً وأفقياً */
+     display: block; /* التأكد من أن الزر يعتبر عنصر بلوك */
+     transition: background 0.3s ease;
+ }
+ 
+ button:hover {
+     background: #e65c00;
+ }
+ 
+ .lang-switch {
+     text-align: center;
+     margin-top: 20px;
+ }
+ 
+ .lang-switch button {
+     background: #555;
+     border: none;
+     padding: 10px 20px;
+     color: #fff;
+     cursor: pointer;
+     margin: 0 10px; /* تقليل المسافة بين الأزرار */
+     font-size: 16px;
+     margin-top: 10px;
+     border-radius: 8px;
+     font-weight: 500;
+     width: 25%;
+     transition: background 0.3s ease;
+     display: inline-block; /* التأكد من أن الأزرار تكون بجانب بعضها */
+ }
+ 
+ .lang-switch button:hover {
+     background: #666;
+ }
+ 
+ .note {
+     font-size: 15px;
+     color: #ddd;
+     margin-top: 20px;
+     text-align: center;
+ }
+ .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #e3e3e3;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #222;
+            color: #e3e3e3;
+        }
+        
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+        
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #555;
+            color: #e3e3e3;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .form-group button:hover {
+            background-color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 60px;
+        }
+        
+        .modal-content {
+            background-color: #222;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #333;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 12px;
+            color: #e3e3e3;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #e3e3e3;
+            text-decoration: none;
+            cursor: pointer;
+        }
+ </style>
+ 
 
 </head>
 <body>
@@ -312,34 +402,34 @@ button:hover {
             <img src="logo2.jpg" alt="Logo">
             <h2 id="site-name">Julas Camp</h2>
         </div>
+        <br>
         
         <form id="bookingForm">
-            <label for="name" id="name-label">Full Name</label>
-            <input type="text" id="name" name="name" required>
+            <label for="name" id="name-label">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
             
-            <label for="email" id="email-label">Email Address</label>
-            <input type="email" id="email" name="email" required>
+            <label for="email" id="email-label">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
             
-            <label for="date" id="date-label">Booking Date</label>
+            <label for="date" id="date-label">Booking Date:</label>
             <input type="date" id="date" name="date" required>
-            
             <div class="titleSelectTime">
                 <h3 id="periods-title">Choose the perfect time </h3>
 
             </div>
 
             <div class="periods">
-                <div class="period" onclick="selectPeriod('09:00 AM - 04:00 PM | 25 OMR')">
+                <div class="period" id="Morning" onclick="selectPeriod('09:00 AM - 04:00 PM | 25 OMR')">
                     Morning <br>
                     09:00 AM - 04:00 PM<br>
                     <span class="price">25 OMR</span>
                 </div>
-                <div class="period" onclick="selectPeriod('05:00 PM - 12:00 AM | 40 OMR')">
+                <div class="period" id="Evening" onclick="selectPeriod('05:00 PM - 12:00 AM | 40 OMR')">
                     Evening <br>
                     05:00 PM - 12:00 AM<br>
                     <span class="price">40 OMR</span>
                 </div>
-                <div class="period" onclick="selectPeriod('05:00 PM - 08:00 AM | 60 OMR')">
+                <div class="period" id="full Night" onclick="selectPeriod('05:00 PM - 08:00 AM | 60 OMR')">
                     Full Night:(Dinner under the stars)<br>
                     05:00 PM - 08:00 AM<br>
                     <span class="price">60 OMR</span>
@@ -356,6 +446,21 @@ button:hover {
         <div class="lang-switch">
             <button onclick="switchLang('ar')">العربية</button>
             <button onclick="switchLang('en')">English</button>
+        </div>
+    </div>
+     <!-- نافذة منبثقة للنجاح -->
+     <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Success Message</p>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة للخطأ -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Error Message</p>
         </div>
     </div>
 </body>

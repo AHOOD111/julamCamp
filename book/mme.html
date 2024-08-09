@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julas Camp</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="logo2.ico" type="image/png">
+<link rel="icon" href="images/logo2.png" type="image/png">
+
+
+
+    <!-- إضافة مكتبات Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbRxofhjd_788QdE7BUNxR_sO58WpzfY",
+            authDomain: "julas-camp.firebaseapp.com",
+            databaseURL: "https://julas-camp-default-rtdb.firebaseio.com",
+            projectId: "julas-camp",
+            storageBucket: "julas-camp.appspot.com",
+            messagingSenderId: "398458036302",
+            appId: "1:398458036302:web:96c36bba22751a8be2a31f",
+            measurementId: "G-EQ9WY4498D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.selectPeriod = function(period) {
+            document.getElementById('time').value = period;
+            var periods = document.getElementsByClassName('period');
+            for (var i = 0; i < periods.length; i++) {
+                periods[i].style.backgroundColor = '#333';
+            }
+            event.target.style.backgroundColor = '#555';
+        }
+
+        window.switchLang = function(lang) {
+            if (lang === 'en') {
+                document.getElementById('site-name').textContent = 'Julas Camp';
+                document.getElementById('form-title').textContent = 'Choose the perfect time and enjoy an unforgettable camping experience ';
+                document.getElementById('name-label').textContent = 'Full Name';
+                document.getElementById('email-label').textContent = 'Email Address';
+                document.getElementById('date-label').textContent = 'Booking Date';
+                document.getElementById('periods-title').textContent = 'Choose the perfect time';
+                document.getElementById('Note').textContent = 'Make your payment via phone, and easily confirm your booking by sending the receipt';
+                document.querySelector('button[type="submit"]').textContent = 'Book';
+
+            } else if (lang === 'ar') {
+                document.getElementById('site-name').textContent = 'Julas Camp';
+                document.getElementById('form-title').textContent = 'اختَر الوقت المثالي، واستمتع بتجربة مخيم لا تُنسى';
+                document.getElementById('name-label').textContent = 'الاسم الكامل';
+                document.getElementById('email-label').textContent = 'البريد الإلكتروني';
+                document.getElementById('date-label').textContent = 'تاريخ الحجز';
+                document.getElementById('periods-title').textContent = 'اختَر الوقت المناسب';
+                document.getElementById('Note').textContent = 'قم بالدفع عبر رقم الهاتف، وأرسل الإيصال لتأكيد حجزك بكل سهولة';
+                document.querySelector('button[type="submit"]').textContent = 'حجز';
+
+            
+            }
+        }
+
+        window.onload = function() {
+            // تحديد لغة الصفحة عند الفتح بناءً على لغة المتصفح
+            const userLang = navigator.language || navigator.userLanguage;
+            if (userLang.startsWith('en')) {
+                switchLang('en');
+            } else {
+                switchLang('ar');
+            }
+
+            document.getElementById('bookingForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                var form = event.target;
+                var name = form.name.value;
+                var email = form.email.value;
+                var dateInput = form.date.value;
+                var selectedPeriod = form.time.value;
+
+                var selectedDate = new Date(dateInput);
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate < today) {
+                    alert('لا يمكنك الحجز في تاريخ فائت.');
+                    return;
+                }
+
+                var bookingKey = dateInput + ' ' + selectedPeriod;
+
+                const bookingRef = ref(database, 'bookings/' + bookingKey);
+                get(bookingRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        alert('التوقيت المحدد في هذا التاريخ محجوز بالفعل.');
+                    } else {
+                        set(bookingRef, {
+                            name: name,
+                            email: email,
+                            date: dateInput,
+                            time: selectedPeriod
+                        }).then(() => {
+                            alert('تم حجز المخيم بنجاح!');
+                            form.reset();
+                            var periods = document.getElementsByClassName('period');
+                            for (var i = 0; i < periods.length; i++) {
+                                periods[i].style.backgroundColor = '#333';
+                            }
+                            window.location.href = 'file:///C:/Users/ahood/Desktop/thank.html';
+
+
+
+                        }).catch((error) => {
+                            console.error('حدث خطأ أثناء الحجز:', error);
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+
+<style>
+   /* استيراد الخط من Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1c1c1c;
+    color: #e3e3e3;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: #000;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(208, 183, 183, 0.6);
+    border-radius: 12px;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    margin-right: 10px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 12px; /* تصغير حجم الخط */
+    font-weight: 300; /* استخدام وزن خط أخف */
+    color: #eee; /* تغيير اللون لتكون أكثر جاذبية */
+}
+
+.periods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.period {
+    padding: 15px;
+    background: #333;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid #444;
+    
+}
+
+.period:hover {
+    background: #444;
+    cursor: pointer;
+
+}
+
+.period .title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    text-decoration: underline; /* وضع خط تحت العنوان */
+    text-underline-offset: 4px; /* تعيين المسافة بين النص والخط تحت */
+}
+
+.period .details {
+    display: flex;
+    align-items: center;
+}
+
+.period .time, .period .price {
+    font-size: 16px;
+    color: #ddd;
+    margin-left: 20px;
+}
+
+.period .price {
+    color: #ff4a4aec;
+    font-weight: 700;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 12px;
+    color: #fdfdfdf5; /* تغيير اللون إلى السكري */
+}
+
+input, select {
+    width: calc(100% - 22px); /* حساب المسافة حول الحقول */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
+    color: #ffffff; /* تغيير اللون إلى السكري */
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: #d62525; /* تغيير اللون إلى السكري */
+}
+
+
+input, select {
+    width: calc(100% - 22px); /* حساب المسافة حول الحقول */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2); /* خلفية شفافة */
+    color: #fff;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: #ddd;
+}
+
+/* زر Book */
+button {
+    padding: 12px;
+    background: #ff6600;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 50%;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 20px auto; /* توسيط الزر عمودياً وأفقياً */
+    display: block; /* التأكد من أن الزر يعتبر عنصر بلوك */
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #e65c00;
+}
+
+.lang-switch {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.lang-switch button {
+    background: #555;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    margin: 0 10px; /* تقليل المسافة بين الأزرار */
+    font-size: 16px;
+    margin-top: 10px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+    display: inline-block; /* التأكد من أن الأزرار تكون بجانب بعضها */
+}
+
+.lang-switch button:hover {
+    background: #666;
+}
+
+
+.note {
+    font-size: 14px;
+    color: #ddd;
+    margin-top: 20px;
+    text-align: center;
+}
+
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logo2.jpg" alt="Logo">
+            <h2 id="site-name">Julas Camp</h2>
+        </div>
+        <div class="title">
+            <h2 id="form-title">Choose the perfect time and enjoy an unforgettable camping experience</h2>
+        </div>
+        <form id="bookingForm">
+            <label for="name" id="name-label">Full Name</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email" id="email-label">Email Address</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="date" id="date-label">Booking Date</label>
+            <input type="date" id="date" name="date" required>
+
+            <h3 id="periods-title">Choose the perfect time </h3>
+            <div class="periods">
+                <div class="period" onclick="selectPeriod('09:00 AM - 04:00 PM | 25 OMR')">
+                    Morning <br>
+                    09:00 AM - 04:00 PM<br>
+                    <span class="price">25 OMR</span>
+                </div>
+                <div class="period" onclick="selectPeriod('05:00 PM - 12:00 AM | 40 OMR')">
+                    Evening <br>
+                    05:00 PM - 12:00 AM<br>
+                    <span class="price">40 OMR</span>
+                </div>
+                <div class="period" onclick="selectPeriod('05:00 PM - 08:00 AM | 60 OMR')">
+                    Full Night:(Dinner under the stars)<br>
+                    05:00 PM - 08:00 AM<br>
+                    <span class="price">60 OMR</span>
+                </div>
+            </div>
+
+            <input type="hidden" id="time" name="time">
+
+            <button  type="submit">Book</button>
+        </form>
+        <div class="note" id="Note">Make your payment via phone, and easily confirm your booking by sending the receipt</div>
+        <div class="lang-switch">
+            <button onclick="switchLang('ar')">العربية</button>
+            <button onclick="switchLang('en')">English</button>
+        </div>
+    </div>
+</body>
+</html>
